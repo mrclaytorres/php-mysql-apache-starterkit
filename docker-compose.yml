@@ -1,0 +1,48 @@
+services:
+  www:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/var/www/html" # sync project DIR with container DIR
+    ports:
+      - 80:80
+      - 443:443 # for future ssl traffic
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
+    networks:
+      - shared-network
+
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=0
+      - MYSQL_RANDOM_ROOT_PASSWORD=no
+    volumes:
+      - "./db:/var/lib/mysql" # sync persistent db to container
+    networks:
+      - shared-network
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
