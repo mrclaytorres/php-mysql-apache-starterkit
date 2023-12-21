@@ -1,5 +1,5 @@
 # php-mysql-apache-starterkit
-A starter kit for PHP, mySQL and Apache that
+A starter kit for PHP, mySQL and Apache that uses Docker
 
 ## Install Dependencies
 The kit uses Dotenv initially so that you can test the database connection.  
